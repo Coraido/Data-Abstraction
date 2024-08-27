@@ -1,184 +1,166 @@
 package dataabstraction;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class Librarymanagementsystembooks {
+public class LibraryManagementSystem {
+    private Library library;
+    private JFrame frame;
+    private JPanel panel;
+    private JButton addButton;
+    private JButton insertButton;
+    private JButton removeButton;
+    private JButton getButton;
+    private JButton sizeButton;
+    private JButton isEmptyButton;
+    private JButton displayButton;
+    private JButton exitButton;
+
     public static void main(String[] args) {
-        Library library = new Library(10);
+        new LibraryManagementSystem();
+    }
 
-        while (true) {
-            //menu
-            String menu = "Library Management System\n" +
-                    "1. Add a book\n" +
-                    "2. Insert a book at a specified index\n" +
-                    "3. Remove a book at a specified index\n" +
-                    "4. Get a book at a specified index\n" +
-                    "5. Get the number of books in the library\n" +
-                    "6. Check if the library is empty\n" +
-                    "7. Display all books\n" +
-                    "8. Exit"; // hello
+    public LibraryManagementSystem() {
+        library = new Library(10);
+        createGUI();
+    }
 
-            String choice = JOptionPane.showInputDialog(menu);
-           
-            int choiceInt = Integer.parseInt(choice);
-            switch (choiceInt) {
-                case 1: //Add books
-                    String title = JOptionPane.showInputDialog("Enter book title:");
-                    String author = JOptionPane.showInputDialog("Enter book author:");
-                    library.add(new Book(title, author));
-                    JOptionPane.showMessageDialog(null, "Book added successfully.");
-                    break;
-                case 2:
-                    String indexStr = JOptionPane.showInputDialog("Enter index:");
-                    int index = Integer.parseInt(indexStr);
-                    title = JOptionPane.showInputDialog("Enter book title:");
-                    author = JOptionPane.showInputDialog("Enter book author:");
-                    try {
-                        library.insert(index, new Book(title, author));
-                        JOptionPane.showMessageDialog(null, "Book inserted successfully at index " + index + ".");
-                    } catch (IndexOutOfBoundsException e) {
-                        JOptionPane.showMessageDialog(null, "Invalid index! Book insertion failed.");
-                    }
-                    break;
-                case 3:
-                    indexStr = JOptionPane.showInputDialog("Enter index:");
-                    index = Integer.parseInt(indexStr);
-                    try {
-                        library.remove(index);
-                        JOptionPane.showMessageDialog(null, "Book removed successfully from index " + index + ".");
-                    } catch (IndexOutOfBoundsException e) {
-                        JOptionPane.showMessageDialog(null, "Invalid index! Book removal failed.");
-                    }
-                    break;
-                case 4:
-                    indexStr = JOptionPane.showInputDialog("Enter index:");
-                    index = Integer.parseInt(indexStr);
-                    try {
-                        Book book = library.get(index);
-                        String bookInfo = "Book at index " + index + ":\n" +
-                                "Title: " + book.getTitle() + "\n" +
-                                "Author: " + book.getAuthor();
-                        JOptionPane.showMessageDialog(null, bookInfo);
-                    } catch (IndexOutOfBoundsException e) {
-                        JOptionPane.showMessageDialog(null, "Invalid index! Cannot retrieve book.");
-                    }
-                    break;
-                case 5:
-                    JOptionPane.showMessageDialog(null, "Number of books: " + library.size());
-                    break;
-                case 6:
-                    JOptionPane.showMessageDialog(null, "Is library empty? " + library.isEmpty());
-                    break;
-                case 7:
-                    if (library.isEmpty()) {
-                        JOptionPane.showMessageDialog(null, "The library is empty.");
-                    } else {
-                        StringBuilder bookList = new StringBuilder();
-                        for (int i = 0; i < library.size(); i++) {
-                            Book b = library.get(i);
-                            bookList.append(i).append(": ").append(b.getTitle()).append(" by ").append(b.getAuthor()).append("\n");
-                        }
-                        JOptionPane.showMessageDialog(null, "Books in the library:\n" + bookList.toString());
-                    }
-                    break;
-                case 8:
-                    JOptionPane.showMessageDialog(null, "Exiting Library Management System. Goodbye!");
-                    System.exit(0);
-                    break;
-                default:
-                    JOptionPane.showMessageDialog(null, "Invalid choice! Please try again.");
+    private void createGUI() {
+        frame = new JFrame("Library Management System");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(400, 300);
+
+        panel = new JPanel();
+        panel.setLayout(new GridLayout(8, 1));
+
+        addButton = new JButton("Add a book");
+        addButton.addActionListener(new AddButtonListener());
+        panel.add(addButton);
+
+        insertButton = new JButton("Insert a book at a specified index");
+        insertButton.addActionListener(new InsertButtonListener());
+        panel.add(insertButton);
+
+        removeButton = new JButton("Remove a book at a specified index");
+        removeButton.addActionListener(new RemoveButtonListener());
+        panel.add(removeButton);
+
+        getButton = new JButton("Get a book at a specified index");
+        getButton.addActionListener(new GetButtonListener());
+        panel.add(getButton);
+
+        sizeButton = new JButton("Get the number of books in the library");
+        sizeButton.addActionListener(new SizeButtonListener());
+        panel.add(sizeButton);
+
+        isEmptyButton = new JButton("Check if the library is empty");
+        isEmptyButton.addActionListener(new IsEmptyButtonListener());
+        panel.add(isEmptyButton);
+
+        displayButton = new JButton("Display all books");
+        displayButton.addActionListener(new DisplayButtonListener());
+        panel.add(displayButton);
+
+        exitButton = new JButton("Exit");
+        exitButton.addActionListener(new ExitButtonListener());
+        panel.add(exitButton);
+
+        frame.add(panel);
+        frame.setVisible(true);
+    }
+
+    private class AddButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String title = JOptionPane.showInputDialog("Enter book title:");
+            String author = JOptionPane.showInputDialog("Enter book author:");
+            library.add(new Book(title, author));
+            JOptionPane.showMessageDialog(null, "Book added successfully.");
+        }
+    }
+
+    private class InsertButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String indexStr = JOptionPane.showInputDialog("Enter index:");
+            int index = Integer.parseInt(indexStr);
+            String title = JOptionPane.showInputDialog("Enter book title:");
+            String author = JOptionPane.showInputDialog("Enter book author:");
+            try {
+                library.insert(index, new Book(title, author));
+                JOptionPane.showMessageDialog(null, "Book inserted successfully at index " + index + ".");
+            } catch (IndexOutOfBoundsException ex) {
+                JOptionPane.showMessageDialog(null, "Invalid index! Book insertion failed.");
             }
         }
     }
-}
 
-// Define the Book class
-class Book {
-    private String title;
-    private String author;
-
-    public Book(String title, String author) {
-        this.title = title;
-        this.author = author;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-}
-
-// Define the Library ADT
-class Library {
-    private Book[] books;
-    private int size;
-
-    public Library(int initialCapacity) {
-        books = new Book[initialCapacity];
-        size = 0;
-    }
-
-    // Get a book at a specified index
-    public Book get(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException();
+    private class RemoveButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String indexStr = JOptionPane.showInputDialog("Enter index:");
+            int index = Integer.parseInt(indexStr);
+            try {
+                library.remove(index);
+                JOptionPane.showMessageDialog(null, "Book removed successfully from index " + index + ".");
+            } catch (IndexOutOfBoundsException ex) {
+                JOptionPane.showMessageDialog(null, "Invalid index! Book removal failed.");
+            }
         }
-        return books[index];
     }
 
-    // Get the number of books in the library
-    public int size() {
-        return size;
+    private class GetButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String indexStr = JOptionPane.showInputDialog("Enter index:");
+            int index = Integer.parseInt(indexStr);
+            try {
+                Book book = library.get(index);
+                String bookInfo = "Book at index " + index + ":\n" +
+                        "Title: " + book.getTitle() + "\n" +
+                        "Author: " + book.getAuthor();
+                JOptionPane.showMessageDialog(null, bookInfo);
+            } catch (IndexOutOfBoundsException ex) {
+                JOptionPane.showMessageDialog(null, "Invalid index! Cannot retrieve book.");
+            }
+        }
     }
 
-    // Check if the library is empty
-    public boolean isEmpty() {
-        return size == 0;
+    private class SizeButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JOptionPane.showMessageDialog(null, "Number of books: " + library.size());
+        }
     }
 
-    // Add a book to the end of the array
-    public void add(Book book) {
-        if (size == books.length) {
-            expandCapacity();
+    private class IsEmptyButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JOptionPane.showMessageDialog(null, "Is library empty? " + library.isEmpty());
         }
-        books[size] = book;
-        size++;
     }
 
-    // Insert a book at a specified index
-    public void insert(int index, Book book) {
-        if (index < 0 || index > size) {
-            throw new IndexOutOfBoundsException();
+    private class DisplayButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (library.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "The library is empty.");
+            } else {
+                StringBuilder bookList = new StringBuilder();
+                for (int i = 0; i < library.size(); i++) {
+                    bookList.append(i).append(": ").append(library.get(i)).append("\n");
+                }
+                JOptionPane.showMessageDialog(null, "Books in the library:\n" + bookList.toString());
+            }
         }
-        if (size == books.length) {
-            expandCapacity();
-        }
-        for (int i = size; i > index; i--) {
-            books[i] = books[i - 1];
-        }
-        books[index] = book;
-        size++;
     }
 
-    // Remove a book at a specified index
-    public void remove(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException();
+    private class ExitButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            System.exit(0);
         }
-        for (int i = index; i < size - 1; i++) {
-            books[i] = books[i + 1];
-        }
-        books[size - 1] = null; // Clear the last book reference
-        size--;
-    }
-
-    // Expand the capacity of the books array
-    private void expandCapacity() {
-        Book[] newBooks = new Book[books.length * 2];
-        System.arraycopy(books, 0, newBooks, 0, books.length);
-        books = newBooks;
     }
 }

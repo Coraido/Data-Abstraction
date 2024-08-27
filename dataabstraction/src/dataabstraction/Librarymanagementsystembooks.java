@@ -22,7 +22,7 @@ public class Librarymanagementsystembooks {
            
             int choiceInt = Integer.parseInt(choice);
             switch (choiceInt) {
-                case 1:
+                case 1: //Add books
                     String title = JOptionPane.showInputDialog("Enter book title:");
                     String author = JOptionPane.showInputDialog("Enter book author:");
                     library.add(new Book(title, author));

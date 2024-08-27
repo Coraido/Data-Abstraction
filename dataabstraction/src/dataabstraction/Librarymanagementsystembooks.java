@@ -7,6 +7,7 @@ public class Librarymanagementsystembooks {
         Library library = new Library(10);
 
         while (true) {
+            //menu
             String menu = "Library Management System\n" +
                     "1. Add a book\n" +
                     "2. Insert a book at a specified index\n" +
